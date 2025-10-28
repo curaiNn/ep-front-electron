@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "composite": true,
+    "types": ["node"]
+  },
+  "include": [
+    "electron.vite.config.ts",
+    "electron/**/*.ts",
+    "src/types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}
