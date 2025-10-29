@@ -4,7 +4,6 @@ const electronAPI = {
   // 示例：获取应用版本
   getAppVersion: (): Promise<string> => ipcRenderer.invoke('get-app-version'),
 
-
   /**
    * 触发主进程检查更新
    */
@@ -17,8 +16,7 @@ const electronAPI = {
    * @param callback 回调函数，接收状态消息
    */
   onUpdateAvailable: (callback: (message: string) => void) => {
-    const listener = (_event: IpcRendererEvent, message: string) =>
-      callback(message)
+    const listener = (_event: IpcRendererEvent, message: string) => callback(message)
     ipcRenderer.on('update-available', listener)
 
     // 返回一个清理函数，用于移除监听器
@@ -32,15 +30,14 @@ const electronAPI = {
    * @param callback 回调函数，接收状态消息
    */
   onUpdateDownloaded: (callback: (message: string) => void) => {
-    const listener = (_event: IpcRendererEvent, message: string) =>
-      callback(message)
+    const listener = (_event: IpcRendererEvent, message: string) => callback(message)
     ipcRenderer.on('update-downloaded', listener)
 
     // 返回一个清理函数，用于移除监听器
     return () => {
       ipcRenderer.removeListener('update-downloaded', listener)
     }
-  },
+  }
 }
 
 try {
@@ -49,4 +46,3 @@ try {
 } catch (error) {
   console.error('Failed to expose electronAPI to preload:', error)
 }
-

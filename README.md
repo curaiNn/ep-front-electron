@@ -38,13 +38,11 @@ macOS: .dmg 镜像 和 .zip 压缩包
 
 npm install
 
-
 2. 开发模式 (热重载)
 
 启动应用进行开发，Vite 和 Electron 都会进行热重载。
 
 npm run dev
-
 
 3. 构建应用
 
@@ -54,14 +52,12 @@ npm run dev
 
 npm run build
 
-
 3.2 构建并打包 Windows 应用
 
 这将首先执行 npm run build，然后使用 electron-builder 打包。
 你会在 release/ 目录下找到 .exe 安装包和 ...-portable.exe 免安装包。
 
 npm run build:win
-
 
 3.3 构建并打包 macOS 应用
 
@@ -70,11 +66,12 @@ npm run build:win
 
 npm run build:mac
 
-
 4. 代码格式化
 
 # 检查格式
+
 npm run lint
 
 # 自动格式化
+
 npm run format

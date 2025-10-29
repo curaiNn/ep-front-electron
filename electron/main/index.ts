@@ -2,7 +2,6 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { createMainWindow } from './modules/windowManager'
-import { autoUpdater } from 'electron-updater'
 
 // 主窗口实例
 let mainWindow: BrowserWindow | null = null
@@ -30,7 +29,6 @@ function handleAppReady() {
     // 如果不是开发环境，则检查更新
     if (!is.dev) {
       // 你可以根据需要调整检查更新的频率或时机
-      autoUpdater.checkForUpdatesAndNotify()
     }
   })
 
@@ -38,41 +36,14 @@ function handleAppReady() {
 
   // 1. 监听“检查更新”事件
   ipcMain.on('check-for-updates', () => {
+    console.log('检查更新...')
     if (!is.dev) {
-      autoUpdater.checkForUpdatesAndNotify()
+      // autoUpdater.checkForUpdatesAndNotify()
     } else {
-      mainWindow?.webContents.send(
-        'update-available',
-        '开发模式下跳过更新检查',
-      )
+      mainWindow?.webContents.send('update-available', '开发模式下跳过更新检查')
     }
   })
 
-  // 2. 监听“发现可用更新”
-  autoUpdater.on('update-available', (info) => {
-    mainWindow?.webContents.send(
-      'update-available',
-      `发现新版本 ${info.version}，正在下载...`,
-    )
-  })
-
-  // 3. 监听“更新下载完成”
-  autoUpdater.on('update-downloaded', () => {
-    mainWindow?.webContents.send(
-      'update-downloaded',
-      '更新下载完成，重启应用以安装',
-    )
-    // 你可以在这里提示用户立即重启，或在用户确认后再重启
-    // autoUpdater.quitAndInstall()
-  })
-
-  // 4. 监听更新错误
-  autoUpdater.on('error', (err) => {
-    mainWindow?.webContents.send(
-      'update-available',
-      `更新出错: ${err.message}`,
-    )
-  })
 }
 
 // === Electron 应用生命周期 ===
@@ -90,4 +61,3 @@ app.on('activate', () => {
     createMainWindow()
   }
 })
-

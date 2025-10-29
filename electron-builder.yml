@@ -1,0 +1,65 @@
+# 1. 按照你的要求，更新 appId 和 productName
+appId: com.electron.app
+productName: epSingleWindow
+asar: true
+directories:
+  output: release/${version}
+  buildResources: build
+files:
+  - filter:
+      - "dist/"
+      - "dist-electron/"
+      - "package.json"
+asarUnpack:
+  - resources/**
+
+mac:
+  target:
+    - dmg
+  icon: mac/icon.icns
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    NSCameraUsageDescription: Application requests access to the device's camera.
+    NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  notarize: false
+
+dmg:
+  artifactName: ${name}-${version}.${ext}
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  executableName: epSingleWindow
+  icon: windows/icon.ico
+
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: electronjs.org
+  category: Utility
+  artifactName: ${name}-${version}.${ext}
+
+appImage:
+  artifactName: ${name}-${version}.${ext}
+
+npmRebuild: false
+
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/

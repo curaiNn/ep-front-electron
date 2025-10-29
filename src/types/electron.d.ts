@@ -3,7 +3,7 @@ export interface IElectronAPI {
   getAppVersion: () => Promise<string>
   checkForUpdates: () => void
   onUpdateAvailable: (callback: (message: string) => void) => () => void
-  onUpdateDownloaded: (callback: (message:string) => void) => () => void
+  onUpdateDownloaded: (callback: (message: string) => void) => () => void
 }
 
 declare global {
@@ -11,4 +11,3 @@ declare global {
     electronAPI: IElectronAPI
   }
 }
-

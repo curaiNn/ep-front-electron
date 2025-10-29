@@ -20,15 +20,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["node"]
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "./**/*.ts",
-    "./**/*.d.ts",
-    "./**/*.tsx",
-    "./**/*.vue"
-  ],
-  "references": [
-    { "path": "../electron/tsconfig.json" }
-  ]
+  "include": ["./**/*.ts", "./**/*.d.ts", "./**/*.tsx", "./**/*.vue"],
+  "references": [{ "path": "../electron/tsconfig.json" }]
 }

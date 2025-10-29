@@ -1,12 +1,11 @@
 <template>
   <div class="container">
     <h1>Electron + Vue 3 + Vite</h1>
-    <p>欢迎来到你的 Electron 应用模板！</p>
+    <p>欢迎来到你的 Electron 应用模板！1.0.0</p>
 
     <div class="card">
       <h2>Pinia 状态管理</h2>
       <p>当前计数: {{ demoStore.count }}</p>
-      <p>双倍计数: {{ demoStore.doubleCount }}</p>
       <button @click="demoStore.increment">增加计数</button>
     </div>
 
@@ -35,7 +34,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useDemoStore } from '@/store/demoStore'
-import api from '@/services/api'
 import dayjs from 'dayjs'
 
 // Pinia
@@ -50,18 +48,9 @@ const apiData = ref(null)
 const apiError = ref<string | null>(null)
 
 const fetchData = async () => {
-  loading.value = true
+  loading.value = false
   apiData.value = null
   apiError.value = null
-  try {
-    // 使用 jsonplaceholder 作为模拟 API
-    const response = await api.get('/todos/1')
-    apiData.value = response.data
-  } catch (error: any) {
-    apiError.value = `请求失败: ${error.message}`
-  } finally {
-    loading.value = false
-  }
 }
 
 // === Electron Updater ===
@@ -72,7 +61,6 @@ let cleanupUpdateDownloaded: () => void
 // 触发检查更新
 const handleCheckForUpdates = () => {
   updateMessage.value = '正在检查更新...'
-  window.electronAPI.checkForUpdates()
 }
 
 onMounted(() => {
@@ -83,18 +71,14 @@ onMounted(() => {
 
   // 监听更新事件
   if (window.electronAPI) {
-    cleanupUpdateAvailable = window.electronAPI.onUpdateAvailable(
-      (message: string) => {
-        updateMessage.value = message
-      },
-    )
+    cleanupUpdateAvailable = window.electronAPI.onUpdateAvailable((message: string) => {
+      updateMessage.value = message
+    })
 
-    cleanupUpdateDownloaded = window.electronAPI.onUpdateDownloaded(
-      (message: string) => {
-        updateMessage.value = message
-        // 你可以在这里显示一个弹窗，询问用户是否立即重启
-      },
-    )
+    cleanupUpdateDownloaded = window.electronAPI.onUpdateDownloaded((message: string) => {
+      updateMessage.value = message
+      // 你可以在这里显示一个弹窗，询问用户是否立即重启
+    })
   }
 
   onUnmounted(() => {
@@ -197,4 +181,3 @@ p {
   }
 }
 </style>
-

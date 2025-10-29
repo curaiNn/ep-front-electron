@@ -1,42 +1,52 @@
 {
-  "name": "electron-vue-template",
+  "name": "ep-front-electron",
   "version": "1.0.0",
   "description": "一个 Electron + Vue 3 + Vite 模板项目",
   "main": "dist-electron/main/index.js",
   "author": "jhfang",
   "license": "MIT",
   "scripts": {
+    "format": "prettier --write .",
     "dev": "electron-vite dev",
-    "build": "pnpm build:renderer && pnpm build:electron",
-    "build:renderer": "vite build",
-    "build:electron": "electron-vite build",
-    "build:win": "pnpm build && electron-builder --win --config electron-builder.json",
-    "build:mac": "pnpm build && electron-builder --mac --config electron-builder.json",
-    "build:linux": "pnpm build && electron-builder --linux --config electron-builder.json"
+    "build": "electron-vite build",
+    "build:win": "pnpm build && electron-builder --win --config electron-builder.yml",
+    "build:mac": "pnpm build && electron-builder --mac --config electron-builder.yml",
+    "build:linux": "pnpm build && electron-builder --linux --config electron-builder.yml"
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
   },
   "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
     "axios": "^1.7.2",
     "dayjs": "^1.11.11",
-    "electron-updater": "^6.2.1",
     "pinia": "^2.1.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@electron-toolkit/utils": "^1.0.2",
-    "@electron-toolkit/vite-plugin-updater": "^1.0.1",
-    "electron": "^31.0.1",
-    "electron-builder": "^24.13.3",
-    "electron-vite": "^2.3.0",
+    "@electron-toolkit/eslint-config-prettier": "3.0.0",
+    "@electron-toolkit/eslint-config-ts": "^3.1.0",
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@types/node": "^22.18.6",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "electron": "^38.1.2",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^4.0.1",
+    "eslint": "^9.36.0",
+    "eslint-plugin-vue": "^10.4.0",
     "less": "^4.2.0",
-    "prettier": "^3.3.2",
-    "typescript": "^5.4.5",
-    "vite": "^5.3.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.6",
     "vue": "^3.4.27",
-    "vue-tsc": "^2.0.21"
+    "vue-eslint-parser": "^10.2.0",
+    "vue-tsc": "^3.0.7"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
   }
 }
-
