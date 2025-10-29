@@ -4,78 +4,97 @@ import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { EpUiPlusResolver } from 'ep-ui-plus/resolver'
+import { loadEnv } from 'vite'
+import { createHtmlPlugin } from 'vite-plugin-html'
 
-export default defineConfig({
-  // Electron 主进程配置
-  main: {
-    // 插件
-    plugins: [
-      // 将所有 node_modules 依赖项外部化
-      // 防止将依赖打包到主进程代码中
-      externalizeDepsPlugin()
-    ],
-    // 构建配置
-    build: {
-      // Rollup 选项
-      rollupOptions: {
-        // 定义入口文件
-        input: {
-          index: resolve(__dirname, 'electron/main/index.ts')
-        }
-      },
-      outDir: 'dist-electron/main'
-    }
-  },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
 
-  // Electron 预加载脚本配置
-  preload: {
-    // 插件
-    plugins: [externalizeDepsPlugin()],
-    // 构建配置
-    build: {
-      // Rollup 选项
-      rollupOptions: {
-        // 定义入口文件
-        input: {
-          index: resolve(__dirname, 'electron/preload/index.ts')
-        }
-      },
-      outDir: 'dist-electron/preload'
-    }
-  },
-
-  // Electron 渲染进程配置 (Vue 应用)
-  renderer: {
-    // 渲染进程的根目录
-    root: '.',
-    resolve: {
-      alias: {
-        '@': resolve('src')
+  return {
+    // Electron 主进程配置
+    main: {
+      // 插件
+      plugins: [
+        // 将所有 node_modules 依赖项外部化
+        // 防止将依赖打包到主进程代码中
+        externalizeDepsPlugin()
+      ],
+      // 构建配置
+      build: {
+        // Rollup 选项
+        rollupOptions: {
+          // 定义入口文件
+          input: {
+            index: resolve(__dirname, 'electron/main/index.ts')
+          }
+        },
+        outDir: 'dist-electron/main'
       }
     },
-    // 插件
-    plugins: [
-      vue(),
-      AutoImport({
-        resolvers: [EpUiPlusResolver()],
-        dts: 'src/auto-imports.d.ts'
-      }),
-      Components({
-        resolvers: [EpUiPlusResolver()],
-        dts: 'src/components.d.ts'
-      })
-    ],
 
-    // 构建配置
-    build: {
-      // Rollup 选项
-      rollupOptions: {
-        // 定义 HTML 入口文件
-        input: {
-          index: resolve(__dirname, 'index.html')
+    // Electron 预加载脚本配置
+    preload: {
+      // 插件
+      plugins: [externalizeDepsPlugin()],
+      // 构建配置
+      build: {
+        // Rollup 选项
+        rollupOptions: {
+          // 定义入口文件
+          input: {
+            index: resolve(__dirname, 'electron/preload/index.ts')
+          }
+        },
+        outDir: 'dist-electron/preload'
+      }
+    },
+
+    // Electron 渲染进程配置 (Vue 应用)
+    renderer: {
+      // 渲染进程的根目录
+      root: '.',
+      // 明确指定 env 目录 (根目录)
+      envDir: resolve(__dirname),
+      resolve: {
+        alias: {
+          '@': resolve('src')
         }
       },
-      outDir: 'dist'
+      // 插件
+      plugins: [
+        vue(),
+        AutoImport({
+          resolvers: [EpUiPlusResolver()],
+          dts: 'types/auto-imports.d.ts'
+        }),
+        Components({
+          resolvers: [EpUiPlusResolver()],
+          dts: 'types/components.d.ts'
+        }),
+        // 3. 在这里配置 vitePluginHtml
+        createHtmlPlugin({
+          inject: {
+            data: {
+              // 将加载的 env 变量注入到 html
+              VITE_APP_TITLE: env.VITE_APP_TITLE,
+              // 将 'mode' 注入为 NODE_ENV，供 <% if ... %> 使用
+              NODE_ENV: mode
+            }
+          }
+        })
+      ],
+
+      // 构建配置
+      build: {
+        // Rollup 选项
+        rollupOptions: {
+          // 定义 HTML 入口文件
+          input: {
+            index: resolve(__dirname, 'index.html')
+          }
+        },
+        outDir: 'dist'
+      }
     }
   }
 })

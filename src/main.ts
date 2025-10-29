@@ -13,9 +13,12 @@ const pinia = createPinia()
 
 // 2. 创建 Vue 应用实例
 const app = createApp(App)
-app.use(EpUiPlus)
 // 3. 使用 Pinia
 app.use(pinia)
 
+app.use(EpUiPlus)
+
 // 4. 挂载应用
 app.mount('#app')
+
+console.log(import.meta.env.VITE_APP_TITLE)
