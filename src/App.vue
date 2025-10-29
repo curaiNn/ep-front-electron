@@ -2,7 +2,7 @@
   <div class="container">
     <h1>Electron + Vue 3 + Vite</h1>
     <p>欢迎来到你的 Electron 应用模板！1.0.0</p>
-
+    <ep-button>按钮</ep-button>
     <div class="card">
       <h2>Pinia 状态管理</h2>
       <p>当前计数: {{ demoStore.count }}</p>

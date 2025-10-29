@@ -1,6 +1,9 @@
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { EpUiPlusResolver } from 'ep-ui-plus/resolver'
 
 export default defineConfig({
   // Electron 主进程配置
@@ -51,7 +54,18 @@ export default defineConfig({
       }
     },
     // 插件
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      AutoImport({
+        resolvers: [EpUiPlusResolver()],
+        dts: 'src/auto-imports.d.ts'
+      }),
+      Components({
+        resolvers: [EpUiPlusResolver()],
+        dts: 'src/components.d.ts'
+      })
+    ],
+
     // 构建配置
     build: {
       // Rollup 选项
