@@ -1,48 +1,44 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
-const electronAPI = {
-  // 示例：获取应用版本
-  getAppVersion: (): Promise<string> => ipcRenderer.invoke('get-app-version'),
+// 警告：白名单安全检查已被移除。
+// 任何通道都可以被渲染进程调用。
 
+contextBridge.exposeInMainWorld('electronApi', {
   /**
-   * 触发主进程检查更新
+   * 发送消息到主进程 (单向)
+   * @param channel 通道名
+   * @param args 参数
    */
-  checkForUpdates: (): void => {
-    ipcRenderer.send('check-for-updates')
+  send: (channel: string, ...args: any[]): void => {
+    ipcRenderer.send(channel, ...args)
   },
 
   /**
-   * 监听“可用更新”事件
-   * @param callback 回调函数，接收状态消息
+   * 从主进程接收消息
+   * @param channel 通道名
+   * @param listener 监听回调
+   * @returns 一个用于移除监听器的清理函数
    */
-  onUpdateAvailable: (callback: (message: string) => void) => {
-    const listener = (_event: IpcRendererEvent, message: string) => callback(message)
-    ipcRenderer.on('update-available', listener)
+  on: (channel: string, listener: (...args: any[]) => void): (() => void) => {
+    // 刻意剥离 'event' 参数
+    const newListener = (_: Electron.IpcRendererEvent, ...args: any[]) => {
+      listener(...args)
+    }
+    ipcRenderer.on(channel, newListener)
 
-    // 返回一个清理函数，用于移除监听器
+    // 返回一个清理函数
     return () => {
-      ipcRenderer.removeListener('update-available', listener)
+      ipcRenderer.removeListener(channel, newListener)
     }
   },
 
   /**
-   * 监听“更新下载完成”事件
-   * @param callback 回调函数，接收状态消息
+   * 发送消息到主进程并等待响应 (双向)
+   * @param channel 通道名
+   * @param args 参数
+   * @returns Promise<any> 响应数据
    */
-  onUpdateDownloaded: (callback: (message: string) => void) => {
-    const listener = (_event: IpcRendererEvent, message: string) => callback(message)
-    ipcRenderer.on('update-downloaded', listener)
-
-    // 返回一个清理函数，用于移除监听器
-    return () => {
-      ipcRenderer.removeListener('update-downloaded', listener)
-    }
+  invoke: (channel: string, ...args: any[]): Promise<any> => {
+    return ipcRenderer.invoke(channel, ...args)
   }
-}
-
-try {
-  // contextIsolation: true 时使用 contextBridge
-  contextBridge.exposeInMainWorld('electronAPI', electronAPI)
-} catch (error) {
-  console.error('Failed to expose electronAPI to preload:', error)
-}
+})

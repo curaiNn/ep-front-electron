@@ -69,6 +69,7 @@ export default defineConfig(({ mode }) => {
         }),
         Components({
           resolvers: [EpUiPlusResolver()],
+          dirs: ['src/components'],
           dts: 'types/components.d.ts'
         }),
         // 3. 在这里配置 vitePluginHtml

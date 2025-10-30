@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 42px;
+        background: transparent;
+      }
+
+      .search-wrap {
+        height: 100%;
+        padding: 12px;
+        background: #fff;
+        box-sizing: border-box;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        /* 模仿你例子中的浮动效果 */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 1px solid #dcdcdc;
+      }
+
+      .input {
+        width: 200px;
+        height: 30px;
+        padding-right: 10px;
+        border: 0;
+        outline: none;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+
+      .button {
+        display: inline-block;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+      }
+
+      .icon {
+        width: 26px;
+        height: 26px;
+        font-size: 26px;
+        margin: 0;
+        padding: 0;
+        border-radius: 50%;
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1;
+      }
+
+      .icon:hover {
+        background-color: #e5e2e2;
+      }
+
+      .prev::before {
+        border-width: 0 6px 6px 6px;
+        border-color: transparent transparent #000 transparent;
+      }
+
+      .prev::after {
+        border-width: 0 6px 6px 6px;
+        border-color: transparent transparent #fff transparent;
+        transform: translate(-50%, calc(-50% + 2px));
+      }
+
+      .next::before {
+        border-width: 6px 6px 0 6px;
+        border-color: #000 transparent transparent transparent;
+      }
+
+      .next::after {
+        border-width: 6px 6px 0 6px;
+        border-color: #fff transparent transparent transparent;
+        transform: translate(-50%, calc(-50% - 2px));
+      }
+
+      .prev::before,
+      .next::before,
+      .prev::after,
+      .next::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-style: solid;
+      }
+
+      .count {
+        display: inline-block;
+        font-size: 12px;
+        margin-right: 6px;
+        min-width: 30px;
+        text-align: center;
+      }
+
+      #close {
+        font-size: 20px;
+        line-height: 26px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search-wrap">
+      <input id="search" class="input" />
+      <div class="count" id="count">0/0</div>
+      <button class="button icon prev" id="prev"></button>
+      <button class="button icon next" id="next"></button>
+      <button class="button icon" id="close">&times;</button>
+    </div>
+
+    <script>
+      // 1. 获取在 preload/index.ts 中定义的 API
+      const api = window.electronApi
+      const searchInput = document.getElementById('search')
+      const countDisplay = document.getElementById('count')
+
+      // 2. 自动聚焦
+      setTimeout(() => {
+        searchInput.focus()
+      }, 100)
+
+      // 3. 监听全局 Esc 键
+      window.onkeydown = event => {
+        if (event.key === 'Escape') {
+          api.send('searchClose')
+        }
+      }
+
+      // 4. 搜索框输入
+      searchInput.oninput = () => {
+        const value = searchInput.value
+        if (!value) {
+          api.send('stop-search')
+          countDisplay.innerText = '0/0'
+          return
+        }
+        // 'start: true' 开始一个新搜索
+        api.send('search', JSON.stringify({ value, start: true }))
+      }
+
+      // 5. 搜索框回车
+      searchInput.onkeydown = event => {
+        if (event.key === 'Enter') {
+          const value = searchInput.value
+          if (!value) return
+          api.send('search', JSON.stringify({ value, next: true }))
+        }
+      }
+
+      // 6. 按钮点击
+      document.getElementById('prev').onclick = () => {
+        const value = searchInput.value
+        if (!value) return
+        api.send('search', JSON.stringify({ value, next: false }))
+      }
+      document.getElementById('next').onclick = () => {
+        const value = searchInput.value
+        if (!value) return
+        api.send('search', JSON.stringify({ value, next: true }))
+      }
+      document.getElementById('close').onclick = () => {
+        api.send('searchClose')
+      }
+
+      // 7. 监听结果
+      api.on('found-in-page', result => {
+        countDisplay.innerText = `${result.activeMatchOrdinal}/${result.matches}`
+      })
+    </script>
+  </body>
+</html>

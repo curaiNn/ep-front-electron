@@ -7,9 +7,9 @@ directories:
   buildResources: build
 files:
   - filter:
-      - "dist/"
-      - "dist-electron/"
-      - "package.json"
+      - 'dist/'
+      - 'dist-electron/'
+      - 'package.json'
 asarUnpack:
   - resources/**
 
@@ -35,7 +35,6 @@ win:
         - x64
   executableName: epSingleWindow
   icon: windows/icon.ico
-
 
 nsis:
   oneClick: false

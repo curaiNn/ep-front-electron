@@ -1,19 +1,19 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= VITE_APP_TITLE %></title>
-  <% if (NODE_ENV === 'development') { %>
-  <meta
-    http-equiv="Content-Security-Policy"
-    content="script-src 'self' http://localhost:8098; connect-src 'self' http://localhost:8098 ws://localhost:8098;"
-  />
-  <script src="http://localhost:8098"></script>
-  <% } %>
-</head>
-<body>
-<div id="app"></div>
-<script type="module" src="/src/main.ts"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= VITE_APP_TITLE %></title>
+    <% if (NODE_ENV === 'development') { %>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' http://localhost:8098; connect-src 'self' http://localhost:8098 ws://localhost:8098;"
+    />
+    <script src="http://localhost:8098"></script>
+    <% } %>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

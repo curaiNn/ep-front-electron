@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron'
-import { createLoadingWindow } from './loadingWindow'
-import { createWindow } from './mainWindow'
+import { createLoadingWindow } from '../windows/loadingWindow'
+import { createWindow } from '../windows/mainWindow'
 
 // 模块内的变量来持有窗口对象
 let mainWindow: BrowserWindow | null

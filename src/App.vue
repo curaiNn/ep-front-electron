@@ -28,6 +28,7 @@
       <button @click="handleCheckForUpdates">检查更新</button>
       <p class="update-status">{{ updateMessage }}</p>
     </div>
+    <!--    <FindWidget />-->
   </div>
 </template>
 
@@ -69,23 +70,23 @@ onMounted(() => {
     currentTime.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
   }, 1000)
 
-  // 监听更新事件
-  if (window.electronAPI) {
-    cleanupUpdateAvailable = window.electronAPI.onUpdateAvailable((message: string) => {
-      updateMessage.value = message
-    })
-
-    cleanupUpdateDownloaded = window.electronAPI.onUpdateDownloaded((message: string) => {
-      updateMessage.value = message
-      // 你可以在这里显示一个弹窗，询问用户是否立即重启
-    })
-  }
+  // // 监听更新事件
+  // if (window.electronAPI) {
+  //   cleanupUpdateAvailable = window.electronAPI.onUpdateAvailable((message: string) => {
+  //     updateMessage.value = message
+  //   })
+  //
+  //   cleanupUpdateDownloaded = window.electronAPI.onUpdateDownloaded((message: string) => {
+  //     updateMessage.value = message
+  //     // 你可以在这里显示一个弹窗，询问用户是否立即重启
+  //   })
+  // }
 
   onUnmounted(() => {
     clearInterval(timer)
     // 组件卸载时清理监听器
-    if (cleanupUpdateAvailable) cleanupUpdateAvailable()
-    if (cleanupUpdateDownloaded) cleanupUpdateDownloaded()
+    // if (cleanupUpdateAvailable) cleanupUpdateAvailable()
+    // if (cleanupUpdateDownloaded) cleanupUpdateDownloaded()
   })
 })
 </script>
