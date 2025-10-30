@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-// 警告：白名单安全检查已被移除。
 // 任何通道都可以被渲染进程调用。
 
 contextBridge.exposeInMainWorld('electronApi', {

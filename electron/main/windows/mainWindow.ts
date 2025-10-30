@@ -27,7 +27,7 @@ export function createWindow(): BrowserWindow {
   })
 
   // --- 加载页面 ---
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  if (is.dev && process.env['EL†ECTRON_RENDERER_URL']) {
     // 开发模式
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     // 自动打开开发者工具
