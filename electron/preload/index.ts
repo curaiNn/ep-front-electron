@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 // 任何通道都可以被渲染进程调用。
 
-contextBridge.exposeInMainWorld('electronApi', {
+contextBridge.exposeInMainWorld('electronAPI', {
   /**
    * 发送消息到主进程 (单向)
    * @param channel 通道名

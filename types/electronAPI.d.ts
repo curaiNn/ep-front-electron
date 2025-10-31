@@ -2,14 +2,6 @@
  * 为 electron/preload/index.ts 中通过 contextBridge 暴露的
  * 'electronApi' 对象提供 TypeScript 类型定义。
  */
-import { ElectronAPI } from '@electron-toolkit/preload'
-
-interface SystemInfo {
-  hostname: string
-  arch: string
-  os: string
-  ip: string
-}
 
 // 1. 定义暴露的 API 接口
 export interface IElectronAPI {
@@ -43,13 +35,6 @@ declare global {
     /**
      * Electron 预加载脚本暴露的通用 IPC API
      */
-    electronAPI: ElectronAPI & {
-      // --- 在这里添加你自定义的 API ---
-      /**
-       * (自定义API) 获取系统信息
-       * @returns Promise<SystemInfo>
-       */
-      getSystemInfo: () => Promise<SystemInfo>
-    }
+    electronAPI: IElectronAPI
   }
 }

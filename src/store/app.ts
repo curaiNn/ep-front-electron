@@ -13,7 +13,7 @@ export const useAppStore = defineStore('app', () => {
    * 应用标题
    * 默认从 package.json 的 description 字段获取
    */
-  const title = ref<string>(packageJson.description || 'EP Electron App')
+  const title = ref<string>(import.meta.env.VITE_APP_TITLE)
 
   /**
    * 当前应用版本
