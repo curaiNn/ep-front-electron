@@ -76,9 +76,7 @@ export default defineConfig(({ mode }) => {
         createHtmlPlugin({
           inject: {
             data: {
-              // 将加载的 env 变量注入到 html
               VITE_APP_TITLE: env.VITE_APP_TITLE,
-              // 将 'mode' 注入为 NODE_ENV，供 <% if ... %> 使用
               NODE_ENV: mode
             }
           }
