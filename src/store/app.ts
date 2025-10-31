@@ -88,7 +88,6 @@ export const useAppStore = defineStore('app', () => {
   }
 
   // --- return ---
-  // 暴露 state 和 actions
   return {
     title,
     currentVersion,

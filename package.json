@@ -22,9 +22,11 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
+    "@ep-ui-plus/ep-icons": "^1.0.0",
     "axios": "^1.7.2",
     "dayjs": "^1.11.11",
     "ep-ui-plus": "^0.0.7",
+    "mitt": "^3.0.1",
     "pinia": "^2.1.7"
   },
   "devDependencies": {

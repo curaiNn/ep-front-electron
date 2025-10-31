@@ -1,7 +1,19 @@
-/* src/assets/variables.less */
+:root {
+  /* 背景 */
+  --background-color: rgba(255, 255, 255, 1); //主背景色
+  --background-color-modal: rgba(255, 255, 255, 1); //modal 窗口背景色
+  --background-color-btn-primary-active: linear-gradient(0deg, rgba(85, 64, 237, 1) 0%, rgba(39, 146, 226, 1) 100%);
 
-/* 主题色 */
-@primary-color: #4169e1; /* 皇家蓝 */
 
-/* 辅色 (之前缺失的变量) */
-@secondary-color: #10b981; /* 翡翠绿 */
+  /* 字体 */
+  --font-color-primary: rgba(0, 4, 26, 1); // 主要内容 标题、正文
+  --font-color-primary-active: rgba(2, 119, 255, 1); // 高亮  鼠标悬浮、文字链接
+  --font-color-primary-active-light: #4B9BFF; //高亮 2 一般用于特殊情况
+
+  --font-color-secondary: rgba(85, 85, 85, 1); // 次要内容  次要文字/表格文字
+  --font-color-hint: rgba(119, 119, 119, 1); // 辅助文字 （说明、详情）
+
+  /* 动画 (这通常是同一颜色的不同透明度) */
+  --stop-color-hosts-service-logo-start: rgba(147, 201, 255, 1);
+  --stop-color-hosts-service-logo-end: rgba(88, 117, 255, 1);
+}

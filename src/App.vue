@@ -28,7 +28,8 @@
       <button @click="handleCheckForUpdates">检查更新</button>
       <p class="update-status">{{ updateMessage }}</p>
     </div>
-    <!--    <FindWidget />-->
+
+    <loading-process />
   </div>
 </template>
 
@@ -36,7 +37,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useDemoStore } from '@/store/demoStore'
 import dayjs from 'dayjs'
-
+import { downloadFile } from '@/utils/download.ts'
 // Pinia
 const demoStore = useDemoStore()
 
@@ -61,7 +62,11 @@ let cleanupUpdateDownloaded: () => void
 
 // 触发检查更新
 const handleCheckForUpdates = () => {
-  updateMessage.value = '正在检查更新...'
+  updateMessage.value = '正在下载...'
+  downloadFile(
+    'http://192.168.118.127:59998/download?path=//u01/nfs/ep-security/epSecurity-Mac-3.0.0-Installer.dmg',
+    'epSecurity-Mac-3.0.0-Installer.dmg'
+  )
 }
 
 onMounted(() => {
@@ -92,9 +97,6 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-/* 引入全局变量 */
-@import '@/assets/variables.less';
-
 .container {
   padding: 2rem;
   font-family: 'Inter', sans-serif;
@@ -103,7 +105,7 @@ onMounted(() => {
 }
 
 h1 {
-  color: @primary-color;
+  color: var(--font-color-primary);
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
@@ -124,13 +126,13 @@ p {
 
   h2 {
     margin-top: 0;
-    color: @primary-color;
-    border-bottom: 2px solid @secondary-color;
+    color: var(--font-color-primary);
+    border-bottom: 2px solid var(--font-color-secondary);
     padding-bottom: 0.5rem;
   }
 
   button {
-    background-color: @primary-color;
+    background-color: var(--font-color-primary);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -143,7 +145,7 @@ p {
       transform 0.1s ease;
 
     &:hover {
-      background-color: darken(@primary-color, 10%);
+      background-color: var(--font-color-primary-active);
     }
 
     &:active {
@@ -175,7 +177,7 @@ p {
   }
 
   .update-status {
-    color: @secondary-color;
+    color: var(--font-color-secondary);
     font-weight: 500;
     margin-top: 1rem;
     font-size: 1rem;
