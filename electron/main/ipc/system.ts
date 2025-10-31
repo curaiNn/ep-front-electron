@@ -3,6 +3,7 @@ import * as os from 'os'
 
 export function registerSystemInfoHandlers(): void {
   ipcMain.handle('get-system-info', () => {
+    console.log('正在获取系统信息...')
     // 注意：IP 地址获取逻辑比较复杂，os.networkInterfaces() 会返回所有接口
     // 这里我们先返回一个占位符，或者你可以实现更复杂的逻辑来找到"主要"IP
     const networkInterfaces = os.networkInterfaces()
