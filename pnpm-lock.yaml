@@ -33,6 +33,9 @@ dependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.3.1(typescript@5.9.3)(vue@3.5.22)
+  vue-router:
+    specifier: ^4.4.5
+    version: 4.6.3(vue@3.5.22)
 
 devDependencies:
   '@electron-toolkit/eslint-config-prettier':
@@ -6127,6 +6130,15 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /vue-router@4.6.3(vue@3.5.22):
+    resolution: {integrity: sha512-ARBedLm9YlbvQomnmq91Os7ck6efydTSpRP3nuOKCvgJOHNrhRoJDSKtee8kcL1Vf7nz6U+PMBL+hTvR3bTVQg==}
+    peerDependencies:
+      vue: ^3.5.0
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.22(typescript@5.9.3)
+    dev: false
 
   /vue-tsc@3.1.2(typescript@5.9.3):
     resolution: {integrity: sha512-3fd4DY0rFczs5f+VB3OhcLU83V6+3Puj2yLBe0Ak65k7ERk+STVNKaOAi0EBo6Lc15UiJB6LzU6Mxy4+h/pKew==}

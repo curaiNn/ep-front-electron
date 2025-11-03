@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-
+import router from './router'
 import EpUiPlus from 'ep-ui-plus'
 import 'ep-ui-plus/dist/index.css'
 
@@ -18,6 +18,8 @@ const app = createApp(App)
 app.use(pinia)
 
 app.use(EpUiPlus)
+
+app.use(router)
 
 const appStore = useAppStore(pinia)
 

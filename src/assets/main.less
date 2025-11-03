@@ -3,11 +3,12 @@
 @import './variables.less';
 @import './mixins.less';
 /* 全局样式 */
-body {
-  font-family: 'Inter', sans-serif;
+html, body {
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #333;
+  background: var(--background-color);
+  color: var(--font-color-primary);
+  .beautyScrollbar();
 }
