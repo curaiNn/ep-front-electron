@@ -17,6 +17,24 @@ const routes: Array<RouteRecordRaw> = [
         path: 'about',
         name: 'About',
         component: () => import('@/views/About/About.vue')
+      },
+      {
+        path: '/china-single-window',
+        name: 'ChinaSingleWindow',
+        // 懒加载新页面
+        component: () => import('@/views/ChinaSingleWindow/index.vue')
+      },
+      {
+        path: '/shanghai-single-window',
+        name: 'ShanghaiSingleWindow',
+        // 懒加载新页面
+        component: () => import('@/views/ShanghaiSingleWindow/index.vue')
+      },
+      {
+        path: '/baoguanxiang',
+        name: 'Baoguanxiang',
+        // 懒加载新页面
+        component: () => import('@/views/Baoguanxiang/index.vue')
       }
     ]
   }

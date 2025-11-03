@@ -1,5 +1,6 @@
 import { registerFindHandlers } from './find'
 import { registerSystemInfoHandlers } from './system'
+import { registerInterceptorHandlers } from './interceptor'
 
 /**
  * 集中注册所有主进程的 IPC 监听器
@@ -13,4 +14,6 @@ export function registerIpcHandlers(): void {
 
   // 注册其他模块的处理器，例如:
   registerSystemInfoHandlers()
+
+  registerInterceptorHandlers()
 }

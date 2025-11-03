@@ -1,7 +1,11 @@
 <template>
+  <!--
+    这部分内容现在会在 src/layout/index.vue 内部滚动
+  -->
   <div class="container">
     <h1>Electron + Vue 3 + Vite</h1>
     <p>欢迎来到你的 Electron 应用模板！1.0.0</p>
+    <ep-button @click="$router.push('/about')">跳转到 About 页面</ep-button>
 
     <!-- 我保留了 Pinia 的示例，因为 main.ts 中注册了它 -->
     <div class="card">
