@@ -1,10 +1,6 @@
 <template>
   <div class="iframe-container">
-    <webview
-      ref="webviewRef"
-      src="https://www.singlewindow.cn/#/manual"
-      class="webview-element"
-    ></webview>
+    <webview ref="webviewRef" src="https://www.singlewindow.cn/#/manual" class="webview-element"></webview>
 
     <!-- 1. [修改] 初始加载状态浮层 (居中) -->
     <div v-if="isLoading" class="loading-container">
@@ -18,9 +14,7 @@
       <p>正在上传报关单至单证保管箱...</p>
       <p>文件名: {{ uploadState.filename }}</p>
       <!-- [修改] 进度显示 (Request #1) -->
-      <p>
-        进度: {{ uploadState.percent }}% ({{ formatBytes(uploadState.bytesUploaded) }} / {{ formatBytes(uploadState.totalSize) }})
-      </p>
+      <p>进度: {{ uploadState.percent }}% ({{ formatBytes(uploadState.bytesUploaded) }} / {{ formatBytes(uploadState.totalSize) }})</p>
     </div>
   </div>
 </template>
@@ -42,7 +36,7 @@ const uploadState = reactive({
   chunks: [] as Uint8Array[],
   bytesUploaded: 0,
   totalSize: 0, // [新增] (Request #1)
-  percent: 0    // [新增] (Request #1)
+  percent: 0 // [新增] (Request #1)
 })
 
 // 用于存储清理函数的 ref
@@ -60,8 +54,8 @@ onMounted(async () => {
     console.log('VUE: Webview DOM Ready.')
     isLoading.value = false // [新增] DOM 加载完毕，隐藏初始加载
 
-    // 自动打开 devtools
-    webview.openDevTools()
+    // [修复 2] 移除自动打开的 devtools
+    // webview.openDevTools()
 
     // 获取 webview 的 ID 并发送给主进程
     try {
@@ -130,7 +124,6 @@ onUnmounted(() => {
   cleanupListeners.value.forEach(cleanup => cleanup())
 })
 
-
 /**
  * 将收集到的数据块 (chunks) 上传到 OCP 服务器
  */
@@ -170,7 +163,6 @@ async function uploadToOCPServer() {
       type: 'success',
       duration: 2000 // 2 秒
     })
-
   } catch (err) {
     console.error('OCP 上传失败:', err)
 
@@ -180,7 +172,6 @@ async function uploadToOCPServer() {
       type: 'error',
       duration: 2000 // 2 秒
     })
-
   } finally {
     // [新增] 无论成功还是失败，都关闭浮层
     uploadState.active = false
@@ -249,7 +240,6 @@ function formatBytes(bytes: number, decimals = 2) {
   color: #f0f0f0;
 }
 
-
 .spinner {
   border: 4px solid #f3f3f3;
   border-top: 4px solid #3498db;
@@ -259,8 +249,11 @@ function formatBytes(bytes: number, decimals = 2) {
   animation: spin 1s linear infinite;
 }
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
-

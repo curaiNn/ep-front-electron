@@ -1,5 +1,6 @@
 import { ipcMain, session, net, BrowserWindow, WebContents } from 'electron'
 import path from 'path'
+import { Buffer } from 'buffer' // 导入 Buffer
 
 // --- [新架构] ---
 
@@ -18,6 +19,7 @@ async function handleOcpUpload(url: string) {
     console.error('IPC: 无法回传消息，vueWebContents 未注册。')
     return
   }
+
   console.log('IPC: 劫持成功, 正在下载:', url)
 
   try {
@@ -28,40 +30,35 @@ async function handleOcpUpload(url: string) {
     }
     console.log('IPC: 内部 fetch 成功, 准备流式传输...')
 
-    // 4. [修改] 解析文件名
+    // ---
+    // [修复 1] 从 Content-Length 响应头中获取文件总大小
+    // ---
+    const contentLength = response.headers.get('content-length')
+    const totalSize = contentLength ? parseInt(contentLength, 10) : 0
+    console.log(`IPC: 解析到 Content-Length: ${totalSize} 字节`)
+
+    // 4. 解析文件名 (逻辑与旧 preload 相同)
     const contentDisposition = response.headers.get('content-disposition')
     let filename = 'unknown_file'
 
     if (contentDisposition) {
       console.log('IPC: 找到 Content-Disposition:', contentDisposition)
-
-      // 1. [新增] 尝试解析 RFC 2047 (=?utf-8?B?...)
-      // 匹配你提供的: =?utf-8?B?4oCc5o6M...cHZGY=?=
-      const rfc2047Match = contentDisposition.match(/filename="=\?utf-8\?B\?([^?]+)\?="/i)
-      if (rfc2047Match && rfc2047Match[1]) {
-        console.log('IPC: 正在解析 RFC 2047 (Base64) 文件名...')
-        try {
-          const base64Part = rfc2047Match[1]
-          // 使用 Node.js 的 Buffer 解码 Base64
-          filename = Buffer.from(base64Part, 'base64').toString('utf-8')
-          console.log('IPC: Base64 解析成功:', filename)
-        } catch (e) {
-          console.error('IPC: Base64 解码失败', e)
-          filename = 'download.dat' // 解码失败时的备用名
-        }
+      // 匹配 =?utf-8?B?...?=
+      const base64Match = contentDisposition.match(/=\?utf-8\?B\?([^?]+)\?=/i)
+      if (base64Match && base64Match[1]) {
+        // [修复 1.1] 解码 Base64 文件名
+        filename = Buffer.from(base64Match[1], 'base64').toString('utf-8')
+        console.log('IPC: 解码 Base64 文件名:', filename)
       } else {
-        // 2. [保留] 尝试简单的 filename="..."
-        const simpleMatch = contentDisposition.match(/filename="?([^"]+)"?/)
-        if (simpleMatch && simpleMatch[1]) {
-          console.log('IPC: 正在解析简单文件名...')
-          filename = simpleMatch[1]
+        // 尝试标准匹配
+        const standardMatch = contentDisposition.match(/filename="?([^"]+)"?/)
+        if (standardMatch && standardMatch[1]) {
+          filename = standardMatch[1]
         }
       }
     }
 
-    // 3. [保留] 如果以上都失败了，从 URL 中猜测
     if (filename === 'unknown_file') {
-      console.log('IPC: 未在 header 中找到文件名, 尝试从 URL 解析...')
       try {
         const urlObj = new URL(url)
         const filenamex = urlObj.searchParams.get('filenamex')
@@ -75,8 +72,13 @@ async function handleOcpUpload(url: string) {
       }
     }
 
-    // 5. 将数据流式传回 Vue 组件 (模仿 preload 的消息)
-    vueWebContents.send('upload-to-ocp-start', { filename, url })
+    // 5. 将数据流式传回 Vue 组件
+    // [修复 1.2] 将 totalSize 发送给 Vue 组件
+    vueWebContents.send('upload-to-ocp-start', {
+      filename,
+      url,
+      totalSize: totalSize // <-- 在这里发送总大小
+    })
 
     const reader = response.body.getReader()
     while (true) {
@@ -121,7 +123,7 @@ export function registerInterceptorHandlers() {
         // 1. 异步处理这个下载 (我们不能阻塞 callback)
         handleOcpUpload(details.url)
 
-        // 2. [关键修复] 放行原始请求，让 webview 内部的下载继续
+        // 2. [修改] 放行原始请求，让 iframe 自己的下载继续
         callback({})
       } else {
         // 不匹配，放行
@@ -136,14 +138,5 @@ export function registerInterceptorHandlers() {
     session.defaultSession.webRequest.onBeforeRequest(null) // 移除所有监听器
     vueWebContents = null
     webviewContentsId = null
-  })
-
-  // 9. [保留] 'get-public-file-path' (虽然现在不用了，但保留它没坏处)
-  ipcMain.handle('get-public-file-path', (event, fileName: string): string => {
-    if (process.env['ELECTRON_RENDERER_URL']) {
-      return path.join(process.cwd(), 'public', fileName)
-    } else {
-      return path.join(__dirname, '../', fileName)
-    }
   })
 }
