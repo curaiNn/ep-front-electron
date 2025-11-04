@@ -21,18 +21,21 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/china-single-window',
         name: 'ChinaSingleWindow',
+        meta: { keepAlive: true },
         // 懒加载新页面
         component: () => import('@/views/ChinaSingleWindow/index.vue')
       },
       {
         path: '/shanghai-single-window',
         name: 'ShanghaiSingleWindow',
+        meta: { keepAlive: true },
         // 懒加载新页面
         component: () => import('@/views/ShanghaiSingleWindow/index.vue')
       },
       {
         path: '/baoguanxiang',
         name: 'Baoguanxiang',
+        meta: { keepAlive: true },
         // 懒加载新页面
         component: () => import('@/views/Baoguanxiang/index.vue')
       }

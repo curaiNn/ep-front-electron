@@ -1,6 +1,4 @@
-<template>
-  about
-</template>
+<template>about</template>
 
 <script setup lang="ts">
 defineOptions({ name: '' })

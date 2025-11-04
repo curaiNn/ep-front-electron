@@ -1,18 +1,26 @@
 <template>
+  <!--
+    [修改]
+    这个外层 div 现在是 '100vh' 高，并且隐藏了溢出。
+    滚动功能将交给子路由 (Home.vue 等) 去实现。
+  -->
   <div class="main-layout-content">
-    <router-view></router-view>
+    <!--
+      [修改]
+      使用 <router-view> 和 <keep-alive>。
+      - v-slot="{ Component }" 是 Vue 3 的标准用法。
+      - :include="cacheList" 会动态地只缓存 store 中的组件。
+    -->
+    <router-view v-slot="{ Component }">
+      <keep-alive :include="cacheList">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 
   <!--
-    [修复] 新增一个透明的 "触发条"
-    它覆盖在 iframe 底部边缘，用来捕获鼠标进入事件
-  -->
-  <div class="dock-trigger" @mouseenter="isMouseAtBottom = true" @mouseleave="isMouseAtBottom = false"></div>
-
-  <!--
-    程序坞 (Dock)
-    - @mouseenter 和 @mouseleave 保持不变
-    - :class 绑定保持不变
+    Dock 栏 (不变)
+    它会浮动在 <router-view> 渲染的页面之上。
   -->
   <nav class="app-dock" :class="{ visible: isDockVisible }" @mouseenter="isDockHovered = true" @mouseleave="isDockHovered = false">
     <router-link to="/" class="dock-item" active-class="active" exact>
@@ -22,102 +30,97 @@
 
     <router-link to="/china-single-window" class="dock-item" active-class="active">
       <span>中国国际贸易单一窗口</span>
-      <img class="dock-icon" src="./logo.png" alt="" />
+      <!--
+        [注意]
+        这个图片路径 './logo.png' 是一个相对路径。
+        在 Vue 组件中，你应该使用 `@/assets/logo.png` (如果图片在 src/assets)
+        或者 `/logo.png` (如果图片在 public 目录)。
+        我将暂时使用一个占位符。
+      -->
+      <img class="dock-icon" src="@/assets/imgs/logo.png" alt="中国国际贸易单一窗口" />
     </router-link>
 
     <router-link to="/baoguanxiang" class="dock-item" active-class="active">
-      <span>上海单一窗口</span>
+      <span>上海单证保管箱</span>
       <div class="dock-icon">箱</div>
     </router-link>
   </nav>
+
+  <!-- [新增] 用于触发 Dock 栏的透明热区 -->
+  <div class="dock-trigger" @mouseenter="isMouseAtBottom = true" @mouseleave="isMouseAtBottom = false"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+// [修改] 导入 Pinia Store 和 Vue Router
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useKeepAliveStore } from '@/store/keepAliveStore' // 1. 导入 Store
 
 defineOptions({ name: 'Layout' })
 
-// --- [修改] Dock 显隐逻辑 ---
+// --- 2. KeepAlive 逻辑 ---
+const keepAliveStore = useKeepAliveStore()
+const cacheList = computed(() => keepAliveStore.cacheList) // 响应式地获取缓存列表
 
+// --- 3. Dock 显隐逻辑 (不变) ---
 const route = useRoute()
-const isDockHovered = ref(false) // 鼠标是否在 Dock 上
-const isMouseAtBottom = ref(false) // 鼠标是否在底部的 "dock-trigger" 上
+const isDockHovered = ref(false)
+const isMouseAtBottom = ref(false) // [修改] 由热区触发
 
-// 1. 计算当前是否在首页
+// 计算当前是否在首页
 const isHomePage = computed(() => route.path === '/')
 
-// 2. 决定 Dock 是否可见的核心逻辑
+// 决定 Dock 是否可见的核心逻辑
 const isDockVisible = computed(() => {
-  // 如果在首页，则始终可见
   if (isHomePage.value) {
-    return true
+    return true // 首页始终可见
   }
-  // 在其他页面，如果鼠标在底部触发条上，或在 Dock 本身上，则可见
+  // 其他页面，如果鼠标在底部热区或在 Dock 上方，则可见
   return isMouseAtBottom.value || isDockHovered.value
 })
-
-// 3. [移除] 不再需要 'handleMouseMove' 或 'handleMouseLeave/Enter'
-// 4. [移除] 不再需要 onMounted/onUnmounted
-
-// --- Dock 逻辑结束 ---
 </script>
 
 <style lang="less" scoped>
 .main-layout-content {
-  height: 100vh;
+  height: 100vh; /* 占满整个视口高度 */
+  /* [修改] 布局本身不再滚动 */
   overflow-y: hidden;
   overflow-x: hidden;
-  background-color: var(--background-color-page);
-  /* [新增] 确保 layout 是一个定位上下文，以便 trigger 生效 */
-  position: relative;
-}
-
-/* [新增] 底部触发条的样式 */
-.dock-trigger {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 30px; /* 触发区域的高度，可以调小，比如 5px */
-  /* background: rgba(255, 0, 0, 0.2); // 调试时取消注释来看清它的位置 */
-  z-index: 999; /* 确保它在 iframe 之上 */
+  background-color: var(--background-color-page); /* 应用页面背景色 */
+  position: relative; /* 确保子元素可以正确定位 */
 }
 
 /*
-  Dock 栏样式
+  Dock 栏样式 (不变)
 */
 .app-dock {
-  position: fixed;
-  bottom: 10px;
-  left: 50%;
+  position: fixed; /* 固定在视口 */
+  bottom: 10px; /* 距离底部 10px */
+  left: 50%; /* 居中 */
 
+  /* 默认状态：隐藏 */
   opacity: 0;
-  transform: translate(-50%, 100px);
-  pointer-events: none;
-  transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+  transform: translate(-50%, 100px); /* 初始位置在屏幕下方 100px */
+  pointer-events: none; /* 隐藏时不可交互 */
+  transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1); /* 添加平滑过渡 */
 
-  /* [修改]
-    将 z-index 提高，确保它在 trigger 之上，
-    这样 "isDockHovered" 才能正常工作
-  */
-  z-index: 1000;
-
+  /* 可见状态 */
   &.visible {
     opacity: 1;
-    transform: translateX(-50%);
-    pointer-events: auto;
+    transform: translateX(-50%); /* 移回原位 */
+    pointer-events: auto; /* 恢复交互 */
   }
 
   display: flex;
   gap: 10px;
   padding: 10px;
 
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3); /* 毛玻璃效果背景 */
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 .dock-item {
@@ -126,15 +129,16 @@ const isDockVisible = computed(() => {
   border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 32px;
+  font-size: 32px; /* 图标大小 */
   color: #333;
   text-decoration: none;
   position: relative;
   transition: all 0.2s cubic-bezier(0.35, 0, 0.25, 1);
 
+  /* 悬停提示文字 */
   span {
     position: absolute;
-    bottom: 80px;
+    bottom: 80px; /* 显示在图标上方 */
     background: #333;
     color: white;
     padding: 4px 8px;
@@ -144,16 +148,28 @@ const isDockVisible = computed(() => {
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.2s ease;
-    pointer-events: none;
+    pointer-events: none; /* 穿透事件 */
   }
 
   .dock-icon {
     transition: all 0.2s ease;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+
+    /* 确保 <img> 也能正确显示 */
+    &[src] {
+      object-fit: cover;
+    }
   }
 
+  /* 悬停效果 */
   &:hover {
     .dock-icon {
-      transform: scale(1.4);
+      transform: scale(1.4); /* 放大图标 */
     }
     span {
       opacity: 1;
@@ -161,8 +177,20 @@ const isDockVisible = computed(() => {
     }
   }
 
+  /* 激活状态 */
   &.active {
     background: rgba(255, 255, 255, 0.5);
   }
+}
+
+/* [新增] Dock 底部触发热区 */
+.dock-trigger {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 10px; /* 10px 高的触发区域 */
+  z-index: 999; /* 在 Dock 之下，但在页面内容之上 */
+  /* background: rgba(255, 0, 0, 0.2); */ /* 取消注释以调试热区 */
 }
 </style>
