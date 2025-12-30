@@ -40,6 +40,12 @@
       <img class="dock-icon" src="@/assets/imgs/logo.png" alt="中国国际贸易单一窗口" />
     </router-link>
 
+
+    <router-link to="/swgdfront-jin" class="dock-item" active-class="active">
+      <span>信天翁进境申报</span>
+      <div class="dock-icon">信</div>
+    </router-link>
+
     <router-link to="/baoguanxiang" class="dock-item" active-class="active">
       <span>上海单证保管箱</span>
       <div class="dock-icon">箱</div>

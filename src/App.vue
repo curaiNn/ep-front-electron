@@ -107,10 +107,10 @@ async function checkCardStatus() {
 onMounted(() => {
   console.log('启动开卡状态轮询...')
   // 1. 立即执行一次检查
-  checkCardStatus()
+  // checkCardStatus()
 
   // 2. 启动定时器，每 5 秒检查一次
-  pollTimer = window.setInterval(checkCardStatus, 5000)
+  // pollTimer = window.setInterval(checkCardStatus, 5000)
 })
 
 onUnmounted(() => {

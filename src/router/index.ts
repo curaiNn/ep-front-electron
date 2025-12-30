@@ -38,6 +38,13 @@ const routes: Array<RouteRecordRaw> = [
         meta: { keepAlive: true },
         // 懒加载新页面
         component: () => import('@/views/Baoguanxiang/index.vue')
+      },
+      {
+        path: '/swgdfront-jin',
+        name: 'SwgdfrontJin',
+        meta: { keepAlive: true },
+        // 懒加载新页面
+        component: () => import('@/views/SwgdfrontJin/index.vue')
       }
     ]
   }
